@@ -8,7 +8,10 @@ const port = 4000
 app.use(cors())
 
 app.get('/breeds', (req, res) => {
-  res.json(breeds)
+  const skip = req.query.skip;
+
+  
+  res.json(breeds.slice(skip, skip + 5))
 })
 
 app.listen(port, () => {

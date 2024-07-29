@@ -1,33 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import BreedCard from './components/card';
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  /* const [count, setCount] = useState(0) */
+  const [breeds, setBreeds] = useState([])
+  const [skip, setSkip] = useState(0)
+
+  const fetchBreeds = async (s) => {
+    const res = await fetch(`http://localhost:4000/breeds?skip=${s}`);
+    const data = await res.json();
+
+    console.log(data)
+
+    setBreeds(data);
+  }
+
+  useEffect(() => {
+    fetchBreeds(skip);
+  }, [skip])
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Breeds</h1>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <div>
+        { breeds.length > 0 && (
+          breeds.map((v) => (
+            <BreedCard 
+              key={v.id}
+              breed={v}
+            />
+          ))
+        )}
+      </div>
+      <div>
+        <button onClick={() => {setSkip(skip - 5)}}>
+          Prev page
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <button onClick={() => {setSkip(skip + 5)}}>
+          Next page
+        </button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
